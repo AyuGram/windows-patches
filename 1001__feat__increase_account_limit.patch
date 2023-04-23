@@ -1,0 +1,21 @@
+Subject: [PATCH] feat: increase account limit
+---
+Index: Telegram/SourceFiles/main/main_domain.h
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/main/main_domain.h b/Telegram/SourceFiles/main/main_domain.h
+--- a/Telegram/SourceFiles/main/main_domain.h	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
++++ b/Telegram/SourceFiles/main/main_domain.h	(date 1680961710499)
+@@ -30,8 +30,8 @@
+ 		std::unique_ptr<Account> account;
+ 	};
+ 
+-	static constexpr auto kMaxAccounts = 3;
+-	static constexpr auto kPremiumMaxAccounts = 6;
++	static constexpr auto kMaxAccounts = 666;
++	static constexpr auto kPremiumMaxAccounts = 1338;
+ 
+ 	explicit Domain(const QString &dataName);
+ 	~Domain();

@@ -1,0 +1,72 @@
+Subject: [PATCH] feat: implement read buttons
+---
+Index: Telegram/SourceFiles/window/window_main_menu.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/window/window_main_menu.cpp b/Telegram/SourceFiles/window/window_main_menu.cpp
+--- a/Telegram/SourceFiles/window/window_main_menu.cpp	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
++++ b/Telegram/SourceFiles/window/window_main_menu.cpp	(date 1681408136000)
+@@ -75,6 +75,12 @@
+ #include <QtGui/QGuiApplication>
+ #include <QtGui/QClipboard>
+ 
++
++// AyuGram includes
++#include "history/history.h"
++#include "data/data_histories.h"
++
++
+ namespace Window {
+ namespace {
+ 
+@@ -759,6 +765,48 @@
+ 		)->setClickedCallback([=] {
+ 			controller->showPeerHistory(controller->session().user());
+ 		});
++        addAction(
++                rpl::single(QString("LRead Messages")),
++                { &st::settingsIconSavedMessages, kIconLightBlue }
++        )->setClickedCallback([=] {
++            auto chats = controller->session().data().chatsList();
++            auto dialogs = chats->indexed();
++            for (auto dialog: *dialogs) {
++                const auto history = dialog->history();
++
++                if (history == nullptr) {
++                    continue;
++                }
++
++                if (history->unreadCount() > 0) {
++                    history->inboxRead(history->msgIdForRead());
++                }
++            }
++        });
++        addAction(
++                rpl::single(QString("SRead Messages")),
++                { &st::settingsIconSavedMessages, kIconLightBlue }
++        )->setClickedCallback([=] {
++            const auto settings = &Core::App().settings();
++            const auto prev = settings->sendReadPackets();
++            settings->setSendReadPackets(true);
++
++            auto chats = controller->session().data().chatsList();
++            auto dialogs = chats->indexed();
++            for (auto dialog: *dialogs) {
++                const auto history = dialog->history();
++
++                if (history == nullptr) {
++                    continue;
++                }
++
++                if (history->unreadCount() > 0) {
++                    controller->session().data().histories().readInbox(history);
++                }
++            }
++
++            settings->setSendReadPackets(prev);
++        });
+ 	} else {
+ 		addAction(
+ 			tr::lng_profile_add_contact(),

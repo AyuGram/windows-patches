@@ -1,0 +1,176 @@
+Subject: [PATCH] feat: add AyuGram options to the structure
+---
+Index: Telegram/SourceFiles/core/core_settings.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/core/core_settings.cpp b/Telegram/SourceFiles/core/core_settings.cpp
+--- a/Telegram/SourceFiles/core/core_settings.cpp	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
++++ b/Telegram/SourceFiles/core/core_settings.cpp	(date 1680959573258)
+@@ -202,11 +202,33 @@
+ 		+ sizeof(qint32)
+ 		+ sizeof(quint64);
+ 
++    // AyuGram settings
++    size += sizeof(quint32) * 12;
++
+ 	auto result = QByteArray();
+ 	result.reserve(size);
+ 	{
+ 		QDataStream stream(&result, QIODevice::WriteOnly);
+ 		stream.setVersion(QDataStream::Qt_5_1);
++
++        // AyuGram settings
++        // note: they're at the start because Telegram adds new options
++        // and this patch may fail
++        stream
++            << quint32(_sendReadPackets)
++            << quint32(_sendOnlinePackets)
++            << quint32(_sendOfflinePacketAfterOnline)
++            << quint32(_sendUploadProgress)
++            << quint32(_useScheduledMessages)
++            << quint32(_keepDeletedMessages)
++            << quint32(_keepMessagesHistory)
++            // reserved for future use
++            << quint32(0)
++            << quint32(0)
++            << quint32(0)
++            << quint32(0)
++            << quint32(0);
++
+ 		stream
+ 			<< themesAccentColors
+ 			<< qint32(_adaptiveForWide.current() ? 1 : 0)
+@@ -347,6 +369,16 @@
+ 	QDataStream stream(serialized);
+ 	stream.setVersion(QDataStream::Qt_5_1);
+ 
++    // AyuGram settings
++    qint32 sendReadPackets = _sendReadPackets ? 1 : 0;
++    qint32 sendOnlinePackets = _sendOnlinePackets ? 1 : 0;
++    qint32 sendOfflinePacketAfterOnline = _sendOfflinePacketAfterOnline ? 1 : 0;
++    qint32 sendUploadProgress = _sendUploadProgress ? 1 : 0;
++    qint32 useScheduledMessages = _useScheduledMessages ? 1 : 0;
++    qint32 keepDeletedMessages = _keepDeletedMessages ? 1 : 0;
++    qint32 keepMessagesHistory = _keepMessagesHistory ? 1 : 0;
++    qint32 empty = 0;
++
+ 	QByteArray themesAccentColors;
+ 	qint32 adaptiveForWide = _adaptiveForWide.current() ? 1 : 0;
+ 	qint32 moderateModeEnabled = _moderateModeEnabled ? 1 : 0;
+@@ -441,6 +473,22 @@
+ 	qint32 ignoreBatterySaving = _ignoreBatterySaving.current() ? 1 : 0;
+ 	quint64 macRoundIconDigest = _macRoundIconDigest.value_or(0);
+ 
++    // AyuGram settings
++    stream
++            >> sendReadPackets
++            >> sendOnlinePackets
++            >> sendOfflinePacketAfterOnline
++            >> sendUploadProgress
++            >> useScheduledMessages
++            >> keepDeletedMessages
++            >> keepMessagesHistory
++            // reserved for future use
++            >> empty
++            >> empty
++            >> empty
++            >> empty
++            >> empty;
++
+ 	stream >> themesAccentColors;
+ 	if (!stream.atEnd()) {
+ 		stream
+@@ -683,6 +731,16 @@
+ 	} else if (!_proxy.setFromSerialized(proxy)) {
+ 		return;
+ 	}
++
++    // AyuGram settings
++    _sendReadPackets = (sendReadPackets == 1);
++    _sendOnlinePackets = (sendOnlinePackets == 1);
++    _sendOfflinePacketAfterOnline = (sendOfflinePacketAfterOnline == 1);
++    _sendUploadProgress = (sendUploadProgress == 1);
++    _useScheduledMessages = (useScheduledMessages == 1);
++    _keepDeletedMessages = (keepDeletedMessages == 1);
++    _keepMessagesHistory = (keepMessagesHistory == 1);
++
+ 	_adaptiveForWide = (adaptiveForWide == 1);
+ 	_moderateModeEnabled = (moderateModeEnabled == 1);
+ 	_songVolume = std::clamp(songVolume / 1e6, 0., 1.);
+Index: Telegram/SourceFiles/core/core_settings.h
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/core/core_settings.h b/Telegram/SourceFiles/core/core_settings.h
+--- a/Telegram/SourceFiles/core/core_settings.h	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
++++ b/Telegram/SourceFiles/core/core_settings.h	(date 1680959359901)
+@@ -128,6 +128,50 @@
+ 		return _proxy;
+ 	}
+ 
++    // AyuGram settings
++    void setSendReadPackets(bool value) {
++        _sendReadPackets = value;
++    }
++    [[nodiscard]] bool sendReadPackets() const {
++        return _sendReadPackets;
++    }
++    void setSendOnlinePackets(bool value) {
++        _sendOnlinePackets = value;
++    }
++    [[nodiscard]] bool sendOnlinePackets() const {
++        return _sendOnlinePackets;
++    }
++    void setSendOfflinePacketAfterOnline(bool value) {
++        _sendOfflinePacketAfterOnline = value;
++    }
++    [[nodiscard]] bool sendOfflinePacketAfterOnline() const {
++        return _sendOfflinePacketAfterOnline;
++    }
++    void setSendUploadProgress(bool value) {
++        _sendUploadProgress = value;
++    }
++    [[nodiscard]] bool sendUploadProgress() const {
++        return _sendUploadProgress;
++    }
++    void setUseScheduledMessages(bool value) {
++        _useScheduledMessages = value;
++    }
++    [[nodiscard]] bool useScheduledMessages() const {
++        return _useScheduledMessages;
++    }
++    void setKeepDeletedMessages(bool value) {
++        _keepDeletedMessages = value;
++    }
++    [[nodiscard]] bool keepDeletedMessages() const {
++        return _keepDeletedMessages;
++    }
++    void setKeepMessagesHistory(bool value) {
++        _keepMessagesHistory = value;
++    }
++    [[nodiscard]] bool keepMessagesHistory() const {
++        return _keepMessagesHistory;
++    }
++
+ 	[[nodiscard]] static bool IsLeftCorner(ScreenCorner corner) {
+ 		return (corner == ScreenCorner::TopLeft)
+ 			|| (corner == ScreenCorner::BottomLeft);
+@@ -830,6 +874,15 @@
+ 
+ 	SettingsProxy _proxy;
+ 
++    // AyuGram settings
++    bool _sendReadPackets = true;
++    bool _sendOnlinePackets = true;
++    bool _sendOfflinePacketAfterOnline = false;
++    bool _sendUploadProgress = true;
++    bool _useScheduledMessages = false;
++    bool _keepDeletedMessages = false;
++    bool _keepMessagesHistory = false;
++
+ 	rpl::variable<bool> _adaptiveForWide = true;
+ 	bool _moderateModeEnabled = false;
+ 	rpl::variable<float64> _songVolume = kDefaultVolume;

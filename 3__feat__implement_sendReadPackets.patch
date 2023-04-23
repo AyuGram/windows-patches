@@ -1,0 +1,36 @@
+Subject: [PATCH] feat: implement sendReadPackets
+---
+Index: Telegram/SourceFiles/data/data_histories.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/data/data_histories.cpp b/Telegram/SourceFiles/data/data_histories.cpp
+--- a/Telegram/SourceFiles/data/data_histories.cpp	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
++++ b/Telegram/SourceFiles/data/data_histories.cpp	(date 1680899163331)
+@@ -24,6 +24,11 @@
+ #include "core/application.h"
+ #include "apiwrap.h"
+ 
++
++// AyuGram includes
++#include "core/core_settings.h"
++
++
+ namespace Data {
+ namespace {
+ 
+@@ -173,6 +178,13 @@
+ 
+ 	Core::App().notifications().clearIncomingFromHistory(history);
+ 
++    // AyuGram sendReadPackets
++    const auto settings = &Core::App().settings();
++    if (!settings->sendReadPackets()) {
++        DEBUG_LOG(("[AyuGram] Don't read messages"));
++        return;
++    }
++
+ 	const auto needsRequest = history->readInboxTillNeedsRequest(tillId);
+ 	if (!needsRequest && !force) {
+ 		DEBUG_LOG(("Reading: readInboxTill finish 1."));

@@ -1,0 +1,130 @@
+Subject: [PATCH] feat: implement useScheduledMessages
+---
+Index: Telegram/SourceFiles/history/history_widget.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/history/history_widget.cpp b/Telegram/SourceFiles/history/history_widget.cpp
+--- a/Telegram/SourceFiles/history/history_widget.cpp	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
++++ b/Telegram/SourceFiles/history/history_widget.cpp	(date 1680900745906)
+@@ -3811,6 +3811,14 @@
+ }
+ 
+ void HistoryWidget::send(Api::SendOptions options) {
++    // AyuGram useScheduledMessages
++    const auto settings = &Core::App().settings();
++    if (settings->useScheduledMessages() && !options.scheduled) {
++        DEBUG_LOG(("[AyuGram] Scheduling message"));
++        auto current = base::unixtime::now();
++        options.scheduled = current + 12;
++    }
++
+ 	if (!_history) {
+ 		return;
+ 	} else if (_editMsgId) {
+Index: Telegram/SourceFiles/apiwrap.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/apiwrap.cpp b/Telegram/SourceFiles/apiwrap.cpp
+--- a/Telegram/SourceFiles/apiwrap.cpp	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
++++ b/Telegram/SourceFiles/apiwrap.cpp	(date 1680900632225)
+@@ -3476,6 +3476,14 @@
+ 		Api::RemoteFileInfo info,
+ 		Api::SendOptions options) {
+ 	if (const auto item = _session->data().message(localId)) {
++        // AyuGram useScheduledMessages
++        const auto settings = &Core::App().settings();
++        if (settings->useScheduledMessages() && !options.scheduled) {
++            DEBUG_LOG(("[AyuGram] Scheduling message"));
++            auto current = base::unixtime::now();
++            options.scheduled = current + 18; // using 18 seconds because photo can be big
++        }
++
+ 		const auto media = Api::PrepareUploadedPhoto(item, std::move(info));
+ 		if (const auto groupId = item->groupId()) {
+ 			uploadAlbumMedia(item, groupId, media);
+@@ -3493,6 +3501,15 @@
+ 		if (!item->media() || !item->media()->document()) {
+ 			return;
+ 		}
++
++        // AyuGram useScheduledMessages
++        const auto settings = &Core::App().settings();
++        if (settings->useScheduledMessages() && !options.scheduled) {
++            DEBUG_LOG(("[AyuGram] Scheduling message"));
++            auto current = base::unixtime::now();
++            options.scheduled = current + 60; // well, document can be really big...
++        }
++
+ 		const auto media = Api::PrepareUploadedDocument(
+ 			item,
+ 			std::move(info));
+@@ -3904,6 +3921,14 @@
+ 		const MTPInputMedia &media,
+ 		Api::SendOptions options,
+ 		uint64 randomId) {
++    // AyuGram useScheduledMessages
++    const auto settings = &Core::App().settings();
++    if (settings->useScheduledMessages() && !options.scheduled) {
++        DEBUG_LOG(("[AyuGram] Scheduling message"));
++        auto current = base::unixtime::now();
++        options.scheduled = current + 12;
++    }
++
+ 	const auto history = item->history();
+ 	const auto replyTo = item->replyToId();
+ 	const auto topicRootId = item->topicRootId();
+@@ -3996,6 +4021,15 @@
+ 		_sendingAlbums.remove(groupId);
+ 		return;
+ 	}
++
++    // AyuGram useScheduledMessages
++    const auto settings = &Core::App().settings();
++    if (settings->useScheduledMessages() && !album->options.scheduled) {
++        DEBUG_LOG(("[AyuGram] Scheduling message"));
++        auto current = base::unixtime::now();
++        album->options.scheduled = current + 12;
++    }
++
+ 	auto sample = (HistoryItem*)nullptr;
+ 	auto medias = QVector<MTPInputSingleMedia>();
+ 	medias.reserve(album->items.size());
+Index: Telegram/SourceFiles/boxes/send_files_box.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/boxes/send_files_box.cpp b/Telegram/SourceFiles/boxes/send_files_box.cpp
+--- a/Telegram/SourceFiles/boxes/send_files_box.cpp	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
++++ b/Telegram/SourceFiles/boxes/send_files_box.cpp	(date 1680900727309)
+@@ -68,6 +68,11 @@
+ 
+ #include <QtCore/QMimeData>
+ 
++
++// AyuGram includes
++#include "base/unixtime.h"
++
++
+ namespace {
+ 
+ constexpr auto kMaxMessageLength = 4096;
+@@ -1335,6 +1340,14 @@
+ void SendFilesBox::send(
+ 		Api::SendOptions options,
+ 		bool ctrlShiftEnter) {
++    // AyuGram useScheduledMessages
++    const auto settings = &Core::App().settings();
++    if (settings->useScheduledMessages() && !options.scheduled) {
++        DEBUG_LOG(("[AyuGram] Scheduling files"));
++        auto current = base::unixtime::now();
++        options.scheduled = current + 60; // well, files can be really big...
++    }
++
+ 	if ((_sendType == Api::SendType::Scheduled
+ 		|| _sendType == Api::SendType::ScheduledToUser)
+ 		&& !options.scheduled) {

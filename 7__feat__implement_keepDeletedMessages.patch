@@ -1,0 +1,52 @@
+Subject: [PATCH] feat: implement keepDeletedMessages
+---
+Index: Telegram/SourceFiles/data/data_session.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/data/data_session.cpp b/Telegram/SourceFiles/data/data_session.cpp
+--- a/Telegram/SourceFiles/data/data_session.cpp	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
++++ b/Telegram/SourceFiles/data/data_session.cpp	(date 1680901620034)
+@@ -2328,7 +2328,40 @@
+ 	for (const auto &messageId : data) {
+ 		if (const auto item = nonChannelMessage(messageId.v)) {
+ 			const auto history = item->history();
+-			item->destroy();
++
++            // AyuGram keepDeletedMessages
++            const auto settings = &Core::App().settings();
++            if (!settings->keepDeletedMessages()) {
++                item->destroy();
++            } else {
++                const auto msg = TextWithEntities{
++                        "Message deleted",
++                        {
++                                EntityInText(
++                                        EntityType::Italic,
++                                        0,
++                                        15,
++                                        "Message deleted"
++                                )
++                        }
++                };
++
++                history->addNewLocalMessage(
++                        history->nextNonHistoryEntryId(),
++                        MessageFlag::HasFromId
++                        | MessageFlag::HasReplyInfo
++                        | MessageFlag::HasPostAuthor,
++                        UserId(),
++                        item->id,
++                        base::unixtime::now(),
++                        item->author()->id,
++                        "AyuGram"_q,
++                        msg,
++                        MTP_messageMediaEmpty(),
++                        HistoryMessageMarkupData(),
++                        uint64(0));
++            }
++
+ 			if (!history->chatListMessageKnown()) {
+ 				historiesToCheck.emplace(history);
+ 			}

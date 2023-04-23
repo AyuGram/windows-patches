@@ -1,0 +1,38 @@
+Subject: [PATCH] feat: implement sendUploadProgress
+---
+Index: Telegram/SourceFiles/api/api_send_progress.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/api/api_send_progress.cpp b/Telegram/SourceFiles/api/api_send_progress.cpp
+--- a/Telegram/SourceFiles/api/api_send_progress.cpp	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
++++ b/Telegram/SourceFiles/api/api_send_progress.cpp	(date 1680899927966)
+@@ -15,6 +15,12 @@
+ #include "data/data_peer_values.h"
+ #include "apiwrap.h"
+ 
++
++// AyuGram includes
++#include "core/application.h"
++#include "core/core_settings.h"
++
++
+ namespace Api {
+ namespace {
+ 
+@@ -112,6 +118,14 @@
+ 	if (skipRequest(key)) {
+ 		return;
+ 	}
++
++    // AyuGram sendUploadProgress
++    const auto settings = &Core::App().settings();
++    if (!settings->sendUploadProgress()) {
++        DEBUG_LOG(("[AyuGram] Don't send upload progress"));
++        return;
++    }
++
+ 	using Type = SendProgressType;
+ 	const auto action = [&]() -> MTPsendMessageAction {
+ 		const auto p = MTP_int(progress);

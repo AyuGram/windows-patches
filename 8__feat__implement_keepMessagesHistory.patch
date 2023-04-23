@@ -1,0 +1,42 @@
+Subject: [PATCH] feat: implement keepMessagesHistory
+---
+Index: Telegram/SourceFiles/data/data_session.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/data/data_session.cpp b/Telegram/SourceFiles/data/data_session.cpp
+--- a/Telegram/SourceFiles/data/data_session.cpp	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
++++ b/Telegram/SourceFiles/data/data_session.cpp	(date 1680902546688)
+@@ -2156,6 +2156,31 @@
+ 		Reactions::CheckUnknownForUnread(this, data);
+ 		return;
+ 	}
++
++    // AyuGram keepMessagesHistory
++    const auto settings = &Core::App().settings();
++    if (settings->keepMessagesHistory() && data.c_message().vmessage().v != existing->originalText().text) {
++        const auto history = existing->history();
++        const auto msg = existing->originalText();
++
++        const auto media = MTP_messageMediaEmpty(); // todo: save media
++
++        history->addNewLocalMessage(
++                history->nextNonHistoryEntryId(),
++                MessageFlag::HasFromId
++                | MessageFlag::HasReplyInfo
++                | MessageFlag::HasPostAuthor,
++                UserId(),
++                existing->id,
++                existing->date(),
++                existing->author()->id,
++                "AyuGram",
++                msg,
++                media,
++                HistoryMessageMarkupData(),
++                existing->groupId().empty() ? 0 : existing->groupId().value);
++    }
++
+ 	if (existing->isLocalUpdateMedia() && data.type() == mtpc_message) {
+ 		updateExistingMessage(data.c_message());
+ 	}
