@@ -6,13 +6,13 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Telegram/SourceFiles/main/main_domain.h b/Telegram/SourceFiles/main/main_domain.h
---- a/Telegram/SourceFiles/main/main_domain.h	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
-+++ b/Telegram/SourceFiles/main/main_domain.h	(date 1680961710499)
+--- a/Telegram/SourceFiles/main/main_domain.h	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/main/main_domain.h	(date 1683129445165)
 @@ -30,8 +30,8 @@
  		std::unique_ptr<Account> account;
  	};
  
--	static constexpr auto kMaxAccounts = 3;
+-	static constexpr auto kMaxAccounts = 100;
 -	static constexpr auto kPremiumMaxAccounts = 6;
 +	static constexpr auto kMaxAccounts = 666;
 +	static constexpr auto kPremiumMaxAccounts = 1338;
