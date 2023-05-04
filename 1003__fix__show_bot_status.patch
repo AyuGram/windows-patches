@@ -1,0 +1,25 @@
+Subject: [PATCH] fix: show bot status
+---
+Index: Telegram/SourceFiles/data/data_peer_values.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/data/data_peer_values.cpp b/Telegram/SourceFiles/data/data_peer_values.cpp
+--- a/Telegram/SourceFiles/data/data_peer_values.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/data/data_peer_values.cpp	(date 1683205834909)
+@@ -58,9 +58,11 @@
+ 		return tr::lng_status_support(tr::now);
+ 	} else if (user->isBot()) {
+ 		auto seesAllMessages = (user->botInfo->readsAllHistory);
+-		return seesAllMessages
+-				? tr::lng_status_bot_reads_all(tr::now)
+-				: tr::lng_status_bot_not_reads_all(tr::now);
++		const auto s = seesAllMessages
++                       ? tr::lng_status_bot_reads_all(tr::now)
++                       : tr::lng_status_bot_not_reads_all(tr::now);
++
++        return tr::lng_status_bot(tr::now) + " (" + s + ")";
+ 	} else if (user->isServiceUser()) {
+ 		return tr::lng_status_support(tr::now);
+ 	}
