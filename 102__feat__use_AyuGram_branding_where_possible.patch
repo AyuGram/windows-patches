@@ -1,22 +1,5 @@
 Subject: [PATCH] feat: use AyuGram branding where possible
 ---
-Index: Telegram/SourceFiles/data/data_session.cpp
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
-diff --git a/Telegram/SourceFiles/data/data_session.cpp b/Telegram/SourceFiles/data/data_session.cpp
---- a/Telegram/SourceFiles/data/data_session.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
-+++ b/Telegram/SourceFiles/data/data_session.cpp	(date 1683129316903)
-@@ -4180,7 +4180,7 @@
- 				| MTPDuser::Flag::f_verified),
- 			MTP_long(peerToUser(PeerData::kServiceNotificationsId).bare),
- 			MTPlong(), // access_hash
--			MTP_string("Telegram"),
-+			MTP_string("AyuGram"),
- 			MTPstring(), // last_name
- 			MTPstring(), // username
- 			MTP_string("42777"),
 Index: Telegram/SourceFiles/window/window_main_menu.cpp
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
@@ -53,98 +36,48 @@ diff --git a/Telegram/SourceFiles/intro/intro_start.cpp b/Telegram/SourceFiles/i
  	setDescriptionText(tr::lng_intro_about2());
  	show();
  }
-Index: Telegram/SourceFiles/settings/settings_notifications.cpp
+Index: Telegram/SourceFiles/info/profile/info_profile_cover.cpp
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/Telegram/SourceFiles/settings/settings_notifications.cpp b/Telegram/SourceFiles/settings/settings_notifications.cpp
---- a/Telegram/SourceFiles/settings/settings_notifications.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
-+++ b/Telegram/SourceFiles/settings/settings_notifications.cpp	(date 1683129352392)
-@@ -309,7 +309,7 @@
- 		p.setPen(st::dialogsNameFg);
- 		p.setFont(st::msgNameFont);
+diff --git a/Telegram/SourceFiles/info/profile/info_profile_cover.cpp b/Telegram/SourceFiles/info/profile/info_profile_cover.cpp
+--- a/Telegram/SourceFiles/info/profile/info_profile_cover.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/info/profile/info_profile_cover.cpp	(date 1683208457689)
+@@ -360,16 +360,20 @@
+ 		refreshNameGeometry(width());
+ 	}, _name->lifetime());
  
--		auto notifyTitle = st::msgNameFont->elided(u"64Gram Desktop"_q, rectForName.width());
-+		auto notifyTitle = st::msgNameFont->elided(u"AyuGram Desktop"_q, rectForName.width());
- 		p.drawText(rectForName.left(), rectForName.top() + st::msgNameFont->ascent, notifyTitle);
+-	if (_peer->id == PeerId(1021739447)) {
++	if (_peer->id == PeerId(1021739447) || _peer->id == PeerId(139303278)) {
+ 		_devBadge->setBadge(BadgeType::Premium, 0);
+ 	} else {
+ 		_devBadge->setBadge(BadgeType::None, 0);
+ 	}
  
- 		st::notifyClose.icon.paint(p, w - st::notifyClosePos.x() - st::notifyClose.width + st::notifyClose.iconPosition.x(), st::notifyClosePos.y() + st::notifyClose.iconPosition.y(), w);
-Index: Telegram/SourceFiles/core/launcher.cpp
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
-diff --git a/Telegram/SourceFiles/core/launcher.cpp b/Telegram/SourceFiles/core/launcher.cpp
---- a/Telegram/SourceFiles/core/launcher.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
-+++ b/Telegram/SourceFiles/core/launcher.cpp	(date 1683129287013)
-@@ -300,7 +300,7 @@
- 	prepareSettings();
- 	initQtMessageLogging();
+ 	_devBadge->setPremiumClickCallback([=] {
+-		if (_peer->id == PeerId(1021739447)) {
+-			Ui::Toast::Show("64Gram developer account");
+-		}
++        if (_peer->id == PeerId(1021739447)) {
++            Ui::Toast::Show("64Gram developer account");
++        }
++
++        if (_peer->id == PeerId(139303278)) {
++            Ui::Toast::Show("AyuGram developer account");
++        }
+ 	});
  
--	QApplication::setApplicationName(u"64Gram"_q);
-+	QApplication::setApplicationName(u"AyuGram"_q);
- 
- #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
- 	// fallback session management is useless for tdesktop since it doesn't have
-Index: Telegram/SourceFiles/core/crash_reports.cpp
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
-diff --git a/Telegram/SourceFiles/core/crash_reports.cpp b/Telegram/SourceFiles/core/crash_reports.cpp
---- a/Telegram/SourceFiles/core/crash_reports.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
-+++ b/Telegram/SourceFiles/core/crash_reports.cpp	(date 1683129272863)
-@@ -414,7 +414,7 @@
- 		fclose(f);
- 
- 		LOG(("Opened '%1' for reading, the previous "
--			"64Gram Desktop launch was not finished properly :( "
-+			"AyuGram Desktop launch was not finished properly :( "
- 			"Crash log size: %2").arg(ReportPath).arg(lastdump.size()));
- 
- 		return lastdump;
-Index: Telegram/Resources/winrc/Telegram.rc
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
-diff --git a/Telegram/Resources/winrc/Telegram.rc b/Telegram/Resources/winrc/Telegram.rc
---- a/Telegram/Resources/winrc/Telegram.rc	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
-+++ b/Telegram/Resources/winrc/Telegram.rc	(date 1683129224206)
-@@ -60,11 +60,11 @@
-     BEGIN
-         BLOCK "040904b0"
-         BEGIN
--            VALUE "CompanyName", "64Gram"
--            VALUE "FileDescription", "64Gram Desktop"
-+            VALUE "CompanyName", "Radolyn Labs"
-+            VALUE "FileDescription", "AyuGram Desktop"
-             VALUE "FileVersion", "1.0.83.0"
--            VALUE "LegalCopyright", "Copyright (C) 2014-2022"
--            VALUE "ProductName", "64Gram Desktop"
-+            VALUE "LegalCopyright", "Copyright (C) 2014-2023"
-+            VALUE "ProductName", "AyuGram Desktop"
-             VALUE "ProductVersion", "1.0.83.0"
-         END
-     END
-Index: Telegram/SourceFiles/boxes/about_box.cpp
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
-diff --git a/Telegram/SourceFiles/boxes/about_box.cpp b/Telegram/SourceFiles/boxes/about_box.cpp
---- a/Telegram/SourceFiles/boxes/about_box.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
-+++ b/Telegram/SourceFiles/boxes/about_box.cpp	(date 1683129235178)
-@@ -65,7 +65,7 @@
- }
- 
- void AboutBox::prepare() {
--	setTitle(rpl::single(u"64Gram Desktop"_q));
-+	setTitle(rpl::single(u"AyuGram Desktop"_q));
- 
- 	addButton(tr::lng_close(), [this] { closeBox(); });
- 
+ 	_devBadge->updated() | rpl::start_with_next([=] {
+@@ -620,7 +624,7 @@
+ 	const auto devBadgeBottom = _st.nameTop + _name->height();
+ 	_devBadge->move(devBadgeLeft, devBadgeTop, devBadgeBottom);
+ 	auto devBadgeWidth = [=]() {
+-		if (_peer->id == PeerId(1021739447)) {
++		if (_peer->id == PeerId(1021739447) || _peer->id == PeerId(139303278) ) {
+ 			if (const auto widget = _devBadge->widget()) {
+ 				return widget->width();
+ 			}
 Index: Telegram/SourceFiles/window/main_window.cpp
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
@@ -209,23 +142,23 @@ diff --git a/Telegram/SourceFiles/api/api_authorizations.cpp b/Telegram/SourceFi
  		: qs(data.vapp_name());// + u" for "_q + qs(d.vplatform());
  	const auto appVer = [&] {
  		const auto version = qs(data.vapp_version());
-Index: Telegram/SourceFiles/window/notifications_manager_default.cpp
+Index: Telegram/SourceFiles/export/output/export_output_html.cpp
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/Telegram/SourceFiles/window/notifications_manager_default.cpp b/Telegram/SourceFiles/window/notifications_manager_default.cpp
---- a/Telegram/SourceFiles/window/notifications_manager_default.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
-+++ b/Telegram/SourceFiles/window/notifications_manager_default.cpp	(date 1683129368877)
-@@ -982,7 +982,7 @@
- 				: TextWithEntities{ name };
- 		};
- 		auto title = options.hideNameAndPhoto
--			? TextWithEntities{ u"64Gram Desktop"_q }
-+			? TextWithEntities{ u"AyuGram Desktop"_q }
- 			: reminder
- 			? tr::lng_notification_reminder(tr::now, Ui::Text::WithEntities)
- 			: topicWithChat();
+diff --git a/Telegram/SourceFiles/export/output/export_output_html.cpp b/Telegram/SourceFiles/export/output/export_output_html.cpp
+--- a/Telegram/SourceFiles/export/output/export_output_html.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/export/output/export_output_html.cpp	(date 1683208387265)
+@@ -938,7 +938,7 @@
+ 			dialog,
+ 			basePath,
+ 			"This message is not supported by this version "
+-			"of 64Gram Desktop. Please update the application.") };
++			"of AyuGram Desktop. Please update the application.") };
+ 	}
+ 
+ 	const auto wrapReplyToLink = [&](const QByteArray &text) {
 Index: Telegram/SourceFiles/export/output/export_output_abstract.cpp
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
@@ -250,7 +183,7 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/Telegram/SourceFiles/core/crash_report_window.cpp b/Telegram/SourceFiles/core/crash_report_window.cpp
 --- a/Telegram/SourceFiles/core/crash_report_window.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
-+++ b/Telegram/SourceFiles/core/crash_report_window.cpp	(date 1683129254895)
++++ b/Telegram/SourceFiles/core/crash_report_window.cpp	(date 1683208545824)
 @@ -38,7 +38,7 @@
  	setWindowIcon(Window::CreateIcon());
  	setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
@@ -260,6 +193,39 @@ diff --git a/Telegram/SourceFiles/core/crash_report_window.cpp b/Telegram/Source
  
  	QPalette p(palette());
  	p.setColor(QPalette::Window, QColor(255, 255, 255));
+@@ -205,7 +205,7 @@
+ : _label(this)
+ , _log(this)
+ , _close(this) {
+-	_label.setText(u"Could not start 64Gram Desktop!\nYou can see complete log below:"_q);
++	_label.setText(u"Could not start AyuGram Desktop!\nYou can see complete log below:"_q);
+ 
+ 	_log.setPlainText(Logs::full());
+ 
+@@ -348,9 +348,9 @@
+ 		[=] { networkSettings(); });
+ 
+ 	if (_sendingState == SendingNoReport) {
+-		_label.setText(u"Last time 64Gram Desktop was not closed properly."_q);
++		_label.setText(u"Last time AyuGram Desktop was not closed properly."_q);
+ 	} else {
+-		_label.setText(u"Last time 64Gram Desktop crashed :("_q);
++		_label.setText(u"Last time AyuGram Desktop crashed :("_q);
+ 	}
+ 
+ 	if (_updaterData) {
+@@ -441,9 +441,9 @@
+ 	});
+ 	_saveReport.setText(u"SAVE TO FILE"_q);
+ 	connect(&_saveReport, &QPushButton::clicked, [=] { saveReport(); });
+-	_getApp.setText(u"GET THE LATEST OFFICIAL VERSION OF 64Gram DESKTOP"_q);
++	_getApp.setText(u"GET THE LATEST OFFICIAL VERSION OF AyuGram DESKTOP"_q);
+ 	connect(&_getApp, &QPushButton::clicked, [=] {
+-		QDesktopServices::openUrl(u"https://github.com/TDesktop-x64/tdesktop"_q);
++		QDesktopServices::openUrl(u"https://github.com/AyuGram/windows-patches"_q);
+ 	});
+ 
+ 	//_send.setText(u"SEND CRASH REPORT"_q);
 @@ -461,7 +461,7 @@
  }
  
@@ -269,6 +235,15 @@ diff --git a/Telegram/SourceFiles/core/crash_report_window.cpp b/Telegram/Source
  	if (!to.isEmpty()) {
  		QFile file(to);
  		if (file.open(QIODevice::WriteOnly)) {
+@@ -869,7 +869,7 @@
+ 		h += _networkSettings.height() + padding;
+ 	}
+ 
+-	QSize s(2 * padding + QFontMetrics(_label.font()).horizontalAdvance(u"Last time 64Gram Desktop was not closed properly."_q) + padding + _networkSettings.width(), h);
++	QSize s(2 * padding + QFontMetrics(_label.font()).horizontalAdvance(u"Last time AyuGram Desktop was not closed properly."_q) + padding + _networkSettings.width(), h);
+ 	if (s == size()) {
+ 		resizeEvent(0);
+ 	} else {
 Index: Telegram/CMakeLists.txt
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
@@ -369,6 +344,266 @@ diff --git a/Telegram/SourceFiles/platform/win/specific_win.cpp b/Telegram/Sourc
  		}
  		QFile userDesktopFile(userDesktopLnk), commonDesktopFile(commonDesktopLnk);
  		if (QFile::exists(userDesktopLnk) && QFile::exists(commonDesktopLnk) && userDesktopLnk != commonDesktopLnk) {
+Index: Telegram/build/setup.iss
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/build/setup.iss b/Telegram/build/setup.iss
+--- a/Telegram/build/setup.iss	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/build/setup.iss	(date 1683208344681)
+@@ -1,9 +1,9 @@
+-#define MyAppShortName "64Gram"
+-#define MyAppName "64Gram Desktop"
+-#define MyAppPublisher "64Gram"
+-#define MyAppURL "https://github.com/TDesktop-x64"
++#define MyAppShortName "AyuGram"
++#define MyAppName "AyuGram Desktop"
++#define MyAppPublisher "AyuGram"
++#define MyAppURL "https://github.com/AyuGram"
+ #define MyAppExeName "Telegram.exe"
+-#define MyAppId "9DB6C981-7FD2-41B5-AEF2-20C933FD3F21"
++#define MyAppId "53F49750-6209-4FBF-9CA8-7A333C87D666"
+ #define CurrentYear GetDateTimeString('yyyy','','')
+ 
+ [Setup]
+@@ -37,11 +37,11 @@
+ #if MyBuildTarget == "win64"
+   ArchitecturesAllowed="x64 arm64"
+   ArchitecturesInstallIn64BitMode="x64 arm64"
+-  OutputBaseFilename=64Gram-setup-x64.{#MyAppVersionFull}
++  OutputBaseFilename=AyuGram-setup-x64.{#MyAppVersionFull}
+   #define ArchModulesFolder "x64"
+   AppVerName={#MyAppName} {#MyAppVersion} 64bit
+ #else
+-  OutputBaseFilename=64Gram-setup.{#MyAppVersionFull}
++  OutputBaseFilename=AyuGram-setup.{#MyAppVersionFull}
+   #define ArchModulesFolder "x86"
+   AppVerName={#MyAppName} {#MyAppVersion} 32bit
+ #endif
+Index: Telegram/SourceFiles/settings/settings_notifications.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/settings/settings_notifications.cpp b/Telegram/SourceFiles/settings/settings_notifications.cpp
+--- a/Telegram/SourceFiles/settings/settings_notifications.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/settings/settings_notifications.cpp	(date 1683129352392)
+@@ -309,7 +309,7 @@
+ 		p.setPen(st::dialogsNameFg);
+ 		p.setFont(st::msgNameFont);
+ 
+-		auto notifyTitle = st::msgNameFont->elided(u"64Gram Desktop"_q, rectForName.width());
++		auto notifyTitle = st::msgNameFont->elided(u"AyuGram Desktop"_q, rectForName.width());
+ 		p.drawText(rectForName.left(), rectForName.top() + st::msgNameFont->ascent, notifyTitle);
+ 
+ 		st::notifyClose.icon.paint(p, w - st::notifyClosePos.x() - st::notifyClose.width + st::notifyClose.iconPosition.x(), st::notifyClosePos.y() + st::notifyClose.iconPosition.y(), w);
+Index: Telegram/SourceFiles/core/application.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/core/application.cpp b/Telegram/SourceFiles/core/application.cpp
+--- a/Telegram/SourceFiles/core/application.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/core/application.cpp	(date 1683208377768)
+@@ -1741,7 +1741,7 @@
+ 			: QString(),
+ 		.protocol = u"tg"_q,
+ 		.protocolName = u"Telegram Link"_q,
+-		.shortAppName = u"64Gram"_q,
++		.shortAppName = u"AyuGram"_q,
+ 		.longAppName = QCoreApplication::applicationName(),
+ 		.displayAppName = AppName.utf16(),
+ 		.displayAppDescription = AppName.utf16(),
+Index: Telegram/SourceFiles/core/launcher.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/core/launcher.cpp b/Telegram/SourceFiles/core/launcher.cpp
+--- a/Telegram/SourceFiles/core/launcher.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/core/launcher.cpp	(date 1683129287013)
+@@ -300,7 +300,7 @@
+ 	prepareSettings();
+ 	initQtMessageLogging();
+ 
+-	QApplication::setApplicationName(u"64Gram"_q);
++	QApplication::setApplicationName(u"AyuGram"_q);
+ 
+ #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+ 	// fallback session management is useless for tdesktop since it doesn't have
+Index: Telegram/Resources/winrc/Updater.rc
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/Resources/winrc/Updater.rc b/Telegram/Resources/winrc/Updater.rc
+--- a/Telegram/Resources/winrc/Updater.rc	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/Resources/winrc/Updater.rc	(date 1683208241069)
+@@ -51,11 +51,11 @@
+     BEGIN
+         BLOCK "040904b0"
+         BEGIN
+-            VALUE "CompanyName", "64Gram"
+-            VALUE "FileDescription", "64Gram Desktop Updater"
++            VALUE "CompanyName", "AyuGram"
++            VALUE "FileDescription", "AyuGram Desktop Updater"
+             VALUE "FileVersion", "1.0.83.0"
+             VALUE "LegalCopyright", "Copyright (C) 2014-2022"
+-            VALUE "ProductName", "64Gram Desktop"
++            VALUE "ProductName", "AyuGram Desktop"
+             VALUE "ProductVersion", "1.0.83.0"
+         END
+     END
+Index: Telegram/SourceFiles/core/crash_reports.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/core/crash_reports.cpp b/Telegram/SourceFiles/core/crash_reports.cpp
+--- a/Telegram/SourceFiles/core/crash_reports.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/core/crash_reports.cpp	(date 1683129272863)
+@@ -414,7 +414,7 @@
+ 		fclose(f);
+ 
+ 		LOG(("Opened '%1' for reading, the previous "
+-			"64Gram Desktop launch was not finished properly :( "
++			"AyuGram Desktop launch was not finished properly :( "
+ 			"Crash log size: %2").arg(ReportPath).arg(lastdump.size()));
+ 
+ 		return lastdump;
+Index: Telegram/Resources/winrc/Telegram.rc
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/Resources/winrc/Telegram.rc b/Telegram/Resources/winrc/Telegram.rc
+--- a/Telegram/Resources/winrc/Telegram.rc	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/Resources/winrc/Telegram.rc	(date 1683129224206)
+@@ -60,11 +60,11 @@
+     BEGIN
+         BLOCK "040904b0"
+         BEGIN
+-            VALUE "CompanyName", "64Gram"
+-            VALUE "FileDescription", "64Gram Desktop"
++            VALUE "CompanyName", "Radolyn Labs"
++            VALUE "FileDescription", "AyuGram Desktop"
+             VALUE "FileVersion", "1.0.83.0"
+-            VALUE "LegalCopyright", "Copyright (C) 2014-2022"
+-            VALUE "ProductName", "64Gram Desktop"
++            VALUE "LegalCopyright", "Copyright (C) 2014-2023"
++            VALUE "ProductName", "AyuGram Desktop"
+             VALUE "ProductVersion", "1.0.83.0"
+         END
+     END
+Index: Telegram/SourceFiles/boxes/about_box.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/boxes/about_box.cpp b/Telegram/SourceFiles/boxes/about_box.cpp
+--- a/Telegram/SourceFiles/boxes/about_box.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/boxes/about_box.cpp	(date 1683208712602)
+@@ -44,7 +44,7 @@
+ 		lt_github_link,
+ 		rpl::single(Ui::Text::Link(
+ 			"GitHub",
+-			"https://github.com/TDesktop-x64/tdesktop")),
++			"https://github.com/AyuGram/windows-patches")),
+ 		Ui::Text::WithEntities);
+ }
+ 
+@@ -65,7 +65,7 @@
+ }
+ 
+ void AboutBox::prepare() {
+-	setTitle(rpl::single(u"64Gram Desktop"_q));
++	setTitle(rpl::single(u"AyuGram Desktop"_q));
+ 
+ 	addButton(tr::lng_close(), [this] { closeBox(); });
+ 
+Index: lib/xdg/org.telegram.desktop.desktop
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/xdg/org.telegram.desktop.desktop b/lib/xdg/org.telegram.desktop.desktop
+--- a/lib/xdg/org.telegram.desktop.desktop	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/lib/xdg/org.telegram.desktop.desktop	(date 1683208253609)
+@@ -1,11 +1,11 @@
+ [Desktop Entry]
+-Name=64Gram Desktop
++Name=AyuGram Desktop
+ Comment=Unofficial desktop version of Telegram messaging app
+ TryExec=telegram-desktop
+ Exec=telegram-desktop -- %u
+ Icon=telegram
+ Terminal=false
+-StartupWMClass=64Gram
++StartupWMClass=AyuGram
+ Type=Application
+ Categories=Chat;Network;InstantMessaging;Qt;
+ MimeType=x-scheme-handler/tg;
+Index: Telegram/SourceFiles/platform/mac/window_title_mac.mm
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/platform/mac/window_title_mac.mm b/Telegram/SourceFiles/platform/mac/window_title_mac.mm
+--- a/Telegram/SourceFiles/platform/mac/window_title_mac.mm	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/platform/mac/window_title_mac.mm	(date 1683208275369)
+@@ -79,7 +79,7 @@
+ 	p.setPen(st::titleFgActive[palette]);
+ 	p.setFont(font);
+ 
+-	p.drawText(titleRect, u"64Gram"_q, style::al_center);
++	p.drawText(titleRect, u"AyuGram"_q, style::al_center);
+ 
+ 	auto isGraphite = ([NSColor currentControlTint] == NSGraphiteControlTint);
+ 	auto buttonSkip = 8;
+Index: Telegram/SourceFiles/platform/mac/main_window_mac.mm
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/platform/mac/main_window_mac.mm b/Telegram/SourceFiles/platform/mac/main_window_mac.mm
+--- a/Telegram/SourceFiles/platform/mac/main_window_mac.mm	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/platform/mac/main_window_mac.mm	(date 1683208288229)
+@@ -282,7 +282,7 @@
+ 		}
+ 	};
+ 
+-	auto main = psMainMenu.addMenu(u"64Gram"_q);
++	auto main = psMainMenu.addMenu(u"AyuGram"_q);
+ 	{
+ 		auto callback = [=] {
+ 			ensureWindowShown();
+@@ -292,7 +292,7 @@
+ 			tr::lng_mac_menu_about_telegram(
+ 				tr::now,
+ 				lt_telegram,
+-				u"64Gram"_q),
++				u"AyuGram"_q),
+ 			std::move(callback))
+ 		->setMenuRole(QAction::AboutQtRole);
+ 	}
+Index: Telegram/SourceFiles/window/notifications_manager_default.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/window/notifications_manager_default.cpp b/Telegram/SourceFiles/window/notifications_manager_default.cpp
+--- a/Telegram/SourceFiles/window/notifications_manager_default.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/window/notifications_manager_default.cpp	(date 1683129368877)
+@@ -982,7 +982,7 @@
+ 				: TextWithEntities{ name };
+ 		};
+ 		auto title = options.hideNameAndPhoto
+-			? TextWithEntities{ u"64Gram Desktop"_q }
++			? TextWithEntities{ u"AyuGram Desktop"_q }
+ 			: reminder
+ 			? tr::lng_notification_reminder(tr::now, Ui::Text::WithEntities)
+ 			: topicWithChat();
 Index: Telegram/SourceFiles/core/version.h
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
