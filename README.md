@@ -63,6 +63,10 @@ Follow [official guide](https://github.com/TDesktop-x64/tdesktop/blob/dev/docs/b
     - C++ ATL latest (x86 & x64)
     - latest Windows 11 SDK
 
+3. Use these credentials:
+    - api_id: `2040`
+    - api_hash: `b18441a1ff607e10a989891a5462e627`
+
 ### How to apply patches
 
 IDK if there's any other way to apply IDEA patches with changelist saving, but that's how I'm doing it:
