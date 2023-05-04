@@ -1,0 +1,38 @@
+Subject: [PATCH] fix: make button text clearer
+---
+Index: Telegram/Resources/langs/lang.strings
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/Resources/langs/lang.strings b/Telegram/Resources/langs/lang.strings
+--- a/Telegram/Resources/langs/lang.strings	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/Resources/langs/lang.strings	(date 1683206715099)
+@@ -3943,17 +3943,17 @@
+ 
+ "lng_message_id" = "Message ID: ";
+ 
+-"lng_selected_forward_emoji_classic" = "📠(Classic)";
+-"lng_selected_forward_emoji" = "📠";
+-"lng_selected_forward_no_quote_emoji" = "🖨️";
+-"lng_forward_to_saved_message_emoji" = "💾";
+-"lng_selected_delete_emoji" = "🗑️";
++"lng_selected_forward_emoji_classic" = "Forward";
++"lng_selected_forward_emoji" = "To Many";
++"lng_selected_forward_no_quote_emoji" = "No Sender";
++"lng_forward_to_saved_message_emoji" = "To Me";
++"lng_selected_delete_emoji" = "Delete";
+ 
+-"lng_selected_forward_text_classic" = "F(Classic)";
+-"lng_selected_forward_text" = "F";
+-"lng_selected_forward_no_quote_text" = "C";
+-"lng_forward_to_saved_message_text" = "S";
+-"lng_selected_delete_text" = "D";
++"lng_selected_forward_text_classic" = "Forward";
++"lng_selected_forward_text" = "To Many";
++"lng_selected_forward_no_quote_text" = "No Sender";
++"lng_forward_to_saved_message_text" = "To Me";
++"lng_selected_delete_text" = "Delete";
+ 
+ "lng_admin_log_banned_send_stickers2" = "Send stickers";
+ "lng_admin_log_banned_send_gifs" = "Send GIFs";
