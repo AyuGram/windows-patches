@@ -7,7 +7,7 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/Telegram/SourceFiles/mtproto/session_private.cpp b/Telegram/SourceFiles/mtproto/session_private.cpp
 --- a/Telegram/SourceFiles/mtproto/session_private.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
-+++ b/Telegram/SourceFiles/mtproto/session_private.cpp	(date 1683215270962)
++++ b/Telegram/SourceFiles/mtproto/session_private.cpp	(date 1683217935533)
 @@ -81,7 +81,7 @@
  #else
  	const auto arch = ' ' + QSysInfo::buildCpuArchitecture();
@@ -17,12 +17,3 @@ diff --git a/Telegram/SourceFiles/mtproto/session_private.cpp b/Telegram/SourceF
  #if defined OS_MAC_STORE
  		return u" Mac App Store"_q;
  #elif defined OS_WIN_STORE // OS_MAC_STORE
-@@ -678,6 +678,8 @@
- 				MTP_string(_options->proxy.host),
- 				MTP_int(_options->proxy.port))
- 			: MTPInputClientProxy();
-+        const auto s1 = deviceModel.toStdString();
-+        const auto s2 = systemVersion.toStdString();
- 		using Flag = MTPInitConnection<SerializedRequest>::Flag;
- 		initWrapper = MTPInitConnection<SerializedRequest>(
- 			MTP_flags(Flag::f_params
