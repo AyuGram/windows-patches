@@ -7,35 +7,92 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/Telegram/SourceFiles/data/data_session.cpp b/Telegram/SourceFiles/data/data_session.cpp
 --- a/Telegram/SourceFiles/data/data_session.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
-+++ b/Telegram/SourceFiles/data/data_session.cpp	(date 1683200224130)
-@@ -2172,6 +2172,31 @@
++++ b/Telegram/SourceFiles/data/data_session.cpp	(date 1683229480118)
+@@ -2172,6 +2172,88 @@
  		Reactions::CheckUnknownForUnread(this, data);
  		return;
  	}
 +
 +    // AyuGram keepMessagesHistory
 +    const auto settings = &Core::App().settings();
-+    if (settings->keepMessagesHistory() && data.c_message().vmessage().v != existing->originalText().text) {
++    const auto edit = HistoryMessageEdition(_session, data.c_message());
++    if (settings->keepMessagesHistory() && !existing->isLocal() && !existing->author()->isSelf() && !edit.isEditHide) {
 +        const auto history = existing->history();
 +        const auto msg = existing->originalText();
 +
-+        const auto media = MTP_messageMediaEmpty(); // todo: save media
++        const auto media = existing->media();
 +
-+        history->addNewLocalMessage(
-+                history->nextNonHistoryEntryId(),
-+                MessageFlag::HasFromId
-+                | MessageFlag::HasReplyInfo
-+                | MessageFlag::HasPostAuthor,
-+                UserId(),
-+                existing->id,
-+                base::unixtime::now(),
-+                existing->author()->id,
-+                "AyuGram",
-+                msg,
-+                media,
-+                HistoryMessageMarkupData(),
-+                existing->groupId().empty() ? 0 : existing->groupId().value);
++        if (edit.textWithEntities == msg) {
++            // check if media changed
++
++            if (!edit.mtpMedia) {
++                goto proceed;
++            }
++
++            if (edit.mtpMedia->type() == mtpc_messageMediaPhoto
++                && media->photo()
++                && edit.mtpMedia->c_messageMediaPhoto().vphoto()->c_photo().vaccess_hash() == media->photo()->mtpInput().c_inputPhoto().vaccess_hash()) {
++                goto proceed;
++            }
++
++            if (edit.mtpMedia->type() == mtpc_messageMediaDocument
++                && media->document()
++                && edit.mtpMedia->c_messageMediaDocument().vdocument()->c_document().vaccess_hash() == media->document()->mtpInput().c_inputDocument().vaccess_hash()) {
++                goto proceed;
++            }
++        }
++
++        auto flags = MessageFlag::HasFromId
++                     | MessageFlag::HasReplyInfo
++                     | MessageFlag::HasPostAuthor;
++
++        if (existing->isPost()) {
++            flags |= MessageFlag::Post;
++        }
++
++        if (!media || !(media->photo() || media->document())) {
++            history->addNewLocalMessage(
++                    history->nextNonHistoryEntryId(),
++                    flags,
++                    UserId(),
++                    existing->id,
++                    base::unixtime::now(),
++                    existing->author()->id,
++                    "AyuGram"_q,
++                    msg,
++                    MTP_messageMediaEmpty(),
++                    HistoryMessageMarkupData(),
++                    existing->groupId().empty() ? 0 : existing->groupId().value);
++        } else {
++            if (media->photo()) {
++                history->addNewLocalMessage(
++                        history->nextNonHistoryEntryId(),
++                        flags,
++                        UserId(),
++                        existing->id,
++                        base::unixtime::now(),
++                        existing->author()->id,
++                        "AyuGram"_q,
++                        media->photo(),
++                        existing->originalText(),
++                        HistoryMessageMarkupData());
++            } else if (media->document()) {
++                history->addNewLocalMessage(
++                        history->nextNonHistoryEntryId(),
++                        flags,
++                        UserId(),
++                        existing->id,
++                        base::unixtime::now(),
++                        existing->author()->id,
++                        "AyuGram"_q,
++                        media->document(),
++                        existing->originalText(),
++                        HistoryMessageMarkupData());
++            }
++        }
 +    }
++
++    proceed:
 +
  	if (existing->isLocalUpdateMedia() && data.type() == mtpc_message) {
  		updateExistingMessage(data.c_message());

@@ -1,52 +1,56 @@
 Subject: [PATCH] feat: implement keepDeletedMessages
 ---
-Index: Telegram/SourceFiles/data/data_session.cpp
+Index: Telegram/SourceFiles/history/history.cpp
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
-diff --git a/Telegram/SourceFiles/data/data_session.cpp b/Telegram/SourceFiles/data/data_session.cpp
---- a/Telegram/SourceFiles/data/data_session.cpp	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
-+++ b/Telegram/SourceFiles/data/data_session.cpp	(date 1680901620034)
-@@ -2328,7 +2328,40 @@
- 	for (const auto &messageId : data) {
- 		if (const auto item = nonChannelMessage(messageId.v)) {
- 			const auto history = item->history();
--			item->destroy();
+diff --git a/Telegram/SourceFiles/history/history.cpp b/Telegram/SourceFiles/history/history.cpp
+--- a/Telegram/SourceFiles/history/history.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/history/history.cpp	(date 1683223985259)
+@@ -477,6 +477,45 @@
+ void History::destroyMessage(not_null<HistoryItem*> item) {
+ 	Expects(item->isHistoryEntry() || !item->mainView());
+ 
++    // AyuGram keepDeletedMessages
++    const auto settings = &Core::App().settings();
++    if (settings->keepDeletedMessages() && !item->isLocal() && !item->author()->isSelf()) {
++        const auto msg = TextWithEntities{
++                "Message deleted",
++                {
++                        EntityInText(
++                                EntityType::Italic,
++                                0,
++                                15,
++                                "Message deleted"
++                        )
++                }
++        };
 +
-+            // AyuGram keepDeletedMessages
-+            const auto settings = &Core::App().settings();
-+            if (!settings->keepDeletedMessages()) {
-+                item->destroy();
-+            } else {
-+                const auto msg = TextWithEntities{
-+                        "Message deleted",
-+                        {
-+                                EntityInText(
-+                                        EntityType::Italic,
-+                                        0,
-+                                        15,
-+                                        "Message deleted"
-+                                )
-+                        }
-+                };
++        auto flags = MessageFlag::HasFromId
++                     | MessageFlag::HasReplyInfo
++                     | MessageFlag::HasPostAuthor;
 +
-+                history->addNewLocalMessage(
-+                        history->nextNonHistoryEntryId(),
-+                        MessageFlag::HasFromId
-+                        | MessageFlag::HasReplyInfo
-+                        | MessageFlag::HasPostAuthor,
-+                        UserId(),
-+                        item->id,
-+                        base::unixtime::now(),
-+                        item->author()->id,
-+                        "AyuGram"_q,
-+                        msg,
-+                        MTP_messageMediaEmpty(),
-+                        HistoryMessageMarkupData(),
-+                        uint64(0));
-+            }
++        if (item->isPost()) {
++            flags |= MessageFlag::Post;
++        }
 +
- 			if (!history->chatListMessageKnown()) {
- 				historiesToCheck.emplace(history);
- 			}
++        addNewLocalMessage(
++                session().data().nextLocalMessageId(),
++                flags,
++                UserId(),
++                item->id,
++                base::unixtime::now(),
++                item->author()->id,
++                "AyuGram"_q,
++                msg,
++                MTP_messageMediaEmpty(),
++                HistoryMessageMarkupData(),
++                uint64(0));
++
++        return;
++    }
++
+ 	const auto peerId = peer->id;
+ 	if (item->isHistoryEntry()) {
+ 		// All this must be done for all items manually in History::clear()!
