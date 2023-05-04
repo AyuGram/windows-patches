@@ -1,0 +1,19 @@
+Subject: [PATCH] fix: use large bubble radius by default
+---
+Index: Telegram/SourceFiles/ui/chat/chat_style_radius.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/ui/chat/chat_style_radius.cpp b/Telegram/SourceFiles/ui/chat/chat_style_radius.cpp
+--- a/Telegram/SourceFiles/ui/chat/chat_style_radius.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/ui/chat/chat_style_radius.cpp	(date 1683200630057)
+@@ -21,7 +21,7 @@
+ 	.id = kOptionUseSmallMsgBubbleRadius,
+ 	.name = "Use small message bubble radius",
+ 	.description = "Makes most message bubbles square-ish.",
+-	.defaultValue = true,
++	.defaultValue = false,
+ 	.restartRequired = true,
+ });
+ 

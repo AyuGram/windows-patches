@@ -6,9 +6,9 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Telegram/SourceFiles/data/data_session.cpp b/Telegram/SourceFiles/data/data_session.cpp
---- a/Telegram/SourceFiles/data/data_session.cpp	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
-+++ b/Telegram/SourceFiles/data/data_session.cpp	(date 1680902546688)
-@@ -2156,6 +2156,31 @@
+--- a/Telegram/SourceFiles/data/data_session.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/data/data_session.cpp	(date 1683200224130)
+@@ -2172,6 +2172,31 @@
  		Reactions::CheckUnknownForUnread(this, data);
  		return;
  	}
@@ -28,7 +28,7 @@ diff --git a/Telegram/SourceFiles/data/data_session.cpp b/Telegram/SourceFiles/d
 +                | MessageFlag::HasPostAuthor,
 +                UserId(),
 +                existing->id,
-+                existing->date(),
++                base::unixtime::now(),
 +                existing->author()->id,
 +                "AyuGram",
 +                msg,
