@@ -6,23 +6,11 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Telegram/SourceFiles/config.h b/Telegram/SourceFiles/config.h
---- a/Telegram/SourceFiles/config.h	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
-+++ b/Telegram/SourceFiles/config.h	(date 1680959958865)
-@@ -11,7 +11,7 @@
- #include "settings.h"
+--- a/Telegram/SourceFiles/config.h	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/config.h	(date 1684019758656)
+@@ -21,9 +21,9 @@
  
- enum {
--	MaxSelectedItems = 100,
-+	MaxSelectedItems = 500,
- 
- 	LocalEncryptIterCount = 4000, // key derivation iteration count
- 	LocalEncryptNoPwdIterCount = 4, // key derivation iteration count without pwd (not secure anyway)
-@@ -19,11 +19,11 @@
- 
- 	RecentInlineBotsLimit = 10,
- 
--	AutoSearchTimeout = 900, // 0.9 secs
-+	AutoSearchTimeout = 5000, // 5 secs
+ 	AutoSearchTimeout = 900, // 0.9 secs
  
 -	PreloadHeightsCount = 3, // when 3 screens to scroll left make a preload request
 +	PreloadHeightsCount = 4, // when 4 screens to scroll left make a preload request
