@@ -1,5 +1,36 @@
 Subject: [PATCH] feat: implement keepDeletedMessages
 ---
+Index: Telegram/SourceFiles/history/history_item.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/history/history_item.cpp b/Telegram/SourceFiles/history/history_item.cpp
+--- a/Telegram/SourceFiles/history/history_item.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/history/history_item.cpp	(date 1684018932857)
+@@ -2417,6 +2417,11 @@
+ }
+ 
+ void HistoryItem::setPostAuthor(const QString &author) {
++    const auto settings = &Core::App().settings();
++    if (settings->keepDeletedMessages() && !(_flags & MessageFlag::HasPostAuthor)) {
++        _flags |= MessageFlag::HasPostAuthor;
++    }
++
+ 	auto msgsigned = Get<HistoryMessageSigned>();
+ 	if (author.isEmpty()) {
+ 		if (!msgsigned) {
+@@ -2435,6 +2440,10 @@
+ 	msgsigned->author = author;
+ 	msgsigned->isAnonymousRank = !isDiscussionPost()
+ 		&& this->author()->isMegagroup();
++
++    if (settings->keepDeletedMessages()) {
++        history()->owner().requestItemViewRefresh(this);
++    }
+ 	history()->owner().requestItemResize(this);
+ }
+ 
 Index: Telegram/SourceFiles/history/history.cpp
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
@@ -7,46 +38,50 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/Telegram/SourceFiles/history/history.cpp b/Telegram/SourceFiles/history/history.cpp
 --- a/Telegram/SourceFiles/history/history.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
-+++ b/Telegram/SourceFiles/history/history.cpp	(date 1683223985259)
-@@ -477,6 +477,45 @@
++++ b/Telegram/SourceFiles/history/history.cpp	(date 1684019273368)
+@@ -477,6 +477,49 @@
  void History::destroyMessage(not_null<HistoryItem*> item) {
  	Expects(item->isHistoryEntry() || !item->mainView());
  
 +    // AyuGram keepDeletedMessages
 +    const auto settings = &Core::App().settings();
-+    if (settings->keepDeletedMessages() && !item->isLocal() && !item->author()->isSelf()) {
-+        const auto msg = TextWithEntities{
-+                "Message deleted",
-+                {
-+                        EntityInText(
-+                                EntityType::Italic,
-+                                0,
-+                                15,
-+                                "Message deleted"
-+                        )
-+                }
-+        };
++    if (settings->keepDeletedMessages() && item->isRegular() && !item->isGroupMigrate()) {
++        if (!item->isService()) {
++            item->setPostAuthor("🧹"_q);
++        } else {
++            const auto msg = TextWithEntities{
++                    "Message deleted",
++                    {
++                            EntityInText(
++                                    EntityType::Italic,
++                                    0,
++                                    15,
++                                    "Message deleted"
++                            )
++                    }
++            };
 +
-+        auto flags = MessageFlag::HasFromId
-+                     | MessageFlag::HasReplyInfo
-+                     | MessageFlag::HasPostAuthor;
++            auto flags = MessageFlag::HasFromId
++                         | MessageFlag::HasReplyInfo
++                         | MessageFlag::HasPostAuthor;
 +
-+        if (item->isPost()) {
-+            flags |= MessageFlag::Post;
++            if (item->isPost()) {
++                flags |= MessageFlag::Post;
++            }
++
++            addNewLocalMessage(
++                    session().data().nextLocalMessageId(),
++                    flags,
++                    UserId(),
++                    item->id,
++                    base::unixtime::now(),
++                    item->author()->id,
++                    "AyuGram"_q,
++                    msg,
++                    MTP_messageMediaEmpty(),
++                    HistoryMessageMarkupData(),
++                    uint64(0));
 +        }
-+
-+        addNewLocalMessage(
-+                session().data().nextLocalMessageId(),
-+                flags,
-+                UserId(),
-+                item->id,
-+                base::unixtime::now(),
-+                item->author()->id,
-+                "AyuGram"_q,
-+                msg,
-+                MTP_messageMediaEmpty(),
-+                HistoryMessageMarkupData(),
-+                uint64(0));
 +
 +        return;
 +    }
