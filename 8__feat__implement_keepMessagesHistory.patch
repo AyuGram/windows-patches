@@ -7,15 +7,20 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/Telegram/SourceFiles/data/data_session.cpp b/Telegram/SourceFiles/data/data_session.cpp
 --- a/Telegram/SourceFiles/data/data_session.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
-+++ b/Telegram/SourceFiles/data/data_session.cpp	(date 1683229480118)
-@@ -2172,6 +2172,88 @@
++++ b/Telegram/SourceFiles/data/data_session.cpp	(date 1684088847905)
+@@ -2172,6 +2172,93 @@
  		Reactions::CheckUnknownForUnread(this, data);
  		return;
  	}
 +
 +    // AyuGram keepMessagesHistory
 +    const auto settings = &Core::App().settings();
-+    const auto edit = HistoryMessageEdition(_session, data.c_message());
++    HistoryMessageEdition edit;
++
++    if (data.type() != mtpc_message) {
++        goto proceed;
++    }
++    edit = HistoryMessageEdition(_session, data.c_message());
 +    if (settings->keepMessagesHistory() && !existing->isLocal() && !existing->author()->isSelf() && !edit.isEditHide) {
 +        const auto history = existing->history();
 +        const auto msg = existing->originalText();
