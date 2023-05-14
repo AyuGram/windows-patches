@@ -1,13 +1,36 @@
 Subject: [PATCH] feat: implement sendReadPackets
 ---
+Index: Telegram/SourceFiles/apiwrap.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/apiwrap.cpp b/Telegram/SourceFiles/apiwrap.cpp
+--- a/Telegram/SourceFiles/apiwrap.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/apiwrap.cpp	(date 1684063173143)
+@@ -1297,6 +1297,14 @@
+ 			markedIds.push_back(MTP_int(item->id));
+ 		}
+ 	}
++
++    // AyuGram sendReadPackets
++    const auto settings = &Core::App().settings();
++    if (!settings->sendReadPackets()) {
++        DEBUG_LOG(("[AyuGram] Don't read contents"));
++        return;
++    }
++
+ 	if (!markedIds.isEmpty()) {
+ 		request(MTPmessages_ReadMessageContents(
+ 			MTP_vector<MTPint>(markedIds)
 Index: Telegram/SourceFiles/data/data_histories.cpp
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Telegram/SourceFiles/data/data_histories.cpp b/Telegram/SourceFiles/data/data_histories.cpp
---- a/Telegram/SourceFiles/data/data_histories.cpp	(revision a6e5e7ab84a4c89fda3e571f5d3322cf0aeac306)
-+++ b/Telegram/SourceFiles/data/data_histories.cpp	(date 1680899163331)
+--- a/Telegram/SourceFiles/data/data_histories.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/data/data_histories.cpp	(date 1683128876868)
 @@ -24,6 +24,11 @@
  #include "core/application.h"
  #include "apiwrap.h"
@@ -20,7 +43,7 @@ diff --git a/Telegram/SourceFiles/data/data_histories.cpp b/Telegram/SourceFiles
  namespace Data {
  namespace {
  
-@@ -173,6 +178,13 @@
+@@ -179,6 +184,13 @@
  
  	Core::App().notifications().clearIncomingFromHistory(history);
  
