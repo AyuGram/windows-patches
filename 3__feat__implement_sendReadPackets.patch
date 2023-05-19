@@ -7,7 +7,7 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/Telegram/SourceFiles/apiwrap.cpp b/Telegram/SourceFiles/apiwrap.cpp
 --- a/Telegram/SourceFiles/apiwrap.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
-+++ b/Telegram/SourceFiles/apiwrap.cpp	(date 1684063173143)
++++ b/Telegram/SourceFiles/apiwrap.cpp	(date 1684483205352)
 @@ -1297,6 +1297,14 @@
  			markedIds.push_back(MTP_int(item->id));
  		}
@@ -23,6 +23,21 @@ diff --git a/Telegram/SourceFiles/apiwrap.cpp b/Telegram/SourceFiles/apiwrap.cpp
  	if (!markedIds.isEmpty()) {
  		request(MTPmessages_ReadMessageContents(
  			MTP_vector<MTPint>(markedIds)
+@@ -1316,6 +1324,14 @@
+ 	if (!item->markContentsRead(true) || !item->isRegular()) {
+ 		return;
+ 	}
++
++    // AyuGram sendReadPackets
++    const auto settings = &Core::App().settings();
++    if (!settings->sendReadPackets()) {
++        DEBUG_LOG(("[AyuGram] Don't read contents"));
++        return;
++    }
++
+ 	const auto ids = MTP_vector<MTPint>(1, MTP_int(item->id));
+ 	if (const auto channel = item->history()->peer->asChannel()) {
+ 		request(MTPchannels_ReadMessageContents(
 Index: Telegram/SourceFiles/data/data_histories.cpp
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
