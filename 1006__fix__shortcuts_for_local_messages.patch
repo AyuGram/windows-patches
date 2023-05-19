@@ -1,0 +1,28 @@
+Subject: [PATCH] fix: shortcuts for local messages
+---
+Index: Telegram/SourceFiles/history/view/history_view_element.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Telegram/SourceFiles/history/view/history_view_element.cpp b/Telegram/SourceFiles/history/view/history_view_element.cpp
+--- a/Telegram/SourceFiles/history/view/history_view_element.cpp	(revision 57c01bbfb18ce0a63fe86d7e998f4a9ad7356915)
++++ b/Telegram/SourceFiles/history/view/history_view_element.cpp	(date 1684487371725)
+@@ -1394,7 +1394,7 @@
+ 
+ Element *Element::previousDisplayedInBlocks() const {
+ 	auto result = previousInBlocks();
+-	while (result && (result->data()->isEmpty() || result->isHidden())) {
++	while (result && (result->data()->isEmpty() || result->isHidden() || result->data()->isLocal())) {
+ 		result = result->previousInBlocks();
+ 	}
+ 	return result;
+@@ -1415,7 +1415,7 @@
+ 
+ Element *Element::nextDisplayedInBlocks() const {
+ 	auto result = nextInBlocks();
+-	while (result && (result->data()->isEmpty() || result->isHidden())) {
++	while (result && (result->data()->isEmpty() || result->isHidden() || result->data()->isLocal())) {
+ 		result = result->nextInBlocks();
+ 	}
+ 	return result;
